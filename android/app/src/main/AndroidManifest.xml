@@ -7,7 +7,6 @@
             android:name=".MainActivity"
             android:exported="true"
             android:launchMode="singleTop"
-            android:taskAffinity=""
             android:theme="@style/LaunchTheme"
             android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
             android:hardwareAccelerated="true"
@@ -42,4 +41,15 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+    <!-- Check whether Health Connect is installed or not -->
+    <queries>
+    <package android:name="com.google.android.apps.healthdata" />
+    <intent>
+        <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
+    </intent>
+    </queries>
+    <uses-permission android:name="android.permission.START_VIEW_PERMISSION_USAGE"/>
+    <uses-permission android:name="android.permission.health.READ_HEART_RATE"/>
+    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+    <uses-permission android:name="android.permission.health.READ_STEPS"/>
 </manifest>
