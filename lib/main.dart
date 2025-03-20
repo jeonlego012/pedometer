@@ -58,7 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> fetchStepData() async {
     int? steps;
 
-    // get steps for today (i.e., since midnight)
+    // get steps for today
     final now = DateTime.now();
     final midnight = DateTime(now.year, now.month, now.day);
 
@@ -68,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       stepsPermission = await health.requestAuthorization([
         HealthDataType.STEPS,
       ]);
+      debugPrint("stepsPermission: $stepsPermission");
     }
 
     if (stepsPermission) {
@@ -89,8 +90,8 @@ class _MyHomePageState extends State<MyHomePage> {
         _state = (steps == null) ? AppState.NO_DATA : AppState.STEPS_READY;
       });
     } else {
-      debugPrint("Authorization not granted - error in authorization");
       setState(() => _state = AppState.DATA_NOT_FETCHED);
+      debugPrint("$_state - Authorization not granted");
     }
   }
 
