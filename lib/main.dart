@@ -1,9 +1,13 @@
+import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pedometer/game/brick_breaker.dart';
 import 'package:pedometer/step/application/step_bloc.dart' as bloc;
 
 void main() {
-  runApp(const MyApp());
+  final game = BrickBreaker();
+  runApp(GameWidget(game: game));
+  //runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
