@@ -1,12 +1,10 @@
-import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pedometer/game/brick_breaker.dart';
+import 'package:pedometer/game/game_app.dart';
 import 'package:pedometer/step/application/step_bloc.dart' as bloc;
 
 void main() {
-  final game = BrickBreaker();
-  runApp(GameWidget(game: game));
+  runApp(const GameApp());
   //runApp(const MyApp());
 }
 

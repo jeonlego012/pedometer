@@ -8,8 +8,10 @@ import 'package:flutter/services.dart';
 import 'components/components.dart';
 import 'config.dart';
 
+enum PlayState { welcome, playing, gameOver, won }
+
 class BrickBreaker extends FlameGame
-    with HasCollisionDetection, KeyboardEvents {
+    with HasCollisionDetection, KeyboardEvents, TapDetector {
   BrickBreaker()
     : super(
         camera: CameraComponent.withFixedResolution(
@@ -17,15 +19,45 @@ class BrickBreaker extends FlameGame
           height: gameHeight,
         ),
       );
+  final ValueNotifier<int> score = ValueNotifier(0);
   final rand = Random();
   double get width => size.x;
   double get height => size.y;
 
+  late PlayState _playState;
+  PlayState get playState => _playState;
+  set playState(PlayState playState) {
+    _playState = playState;
+    switch (playState) {
+      case PlayState.welcome:
+      case PlayState.gameOver:
+      case PlayState.won:
+        overlays.add(playState.name);
+      case PlayState.playing:
+        overlays.remove(PlayState.welcome.name);
+        overlays.remove(PlayState.gameOver.name);
+        overlays.remove(PlayState.won.name);
+    }
+  }
+
   @override
-  FutureOr<void> onLoad() async {
+  FutureOr<void> onLoad() {
     super.onLoad();
     camera.viewfinder.anchor = Anchor.topLeft;
     world.add(PlayArea());
+    playState = PlayState.welcome;
+  }
+
+  void startGame() {
+    if (playState == PlayState.playing) return;
+
+    world.removeAll(world.children.query<Ball>());
+    world.removeAll(world.children.query<Bat>());
+    world.removeAll(world.children.query<Brick>());
+
+    playState = PlayState.playing;
+    score.value = 0;
+
     world.add(
       Ball(
         radius: ballRadius,
@@ -46,9 +78,9 @@ class BrickBreaker extends FlameGame
         position: Vector2(width / 2, height * 0.95),
       ),
     );
-    await world.addAll([
+    world.addAll([
       for (var i = 0; i < brickColors.length; i++)
-        for (var j = 1; j <= 5; j++)
+        for (var j = 1; j <= 2; j++)
           Brick(
             position: Vector2(
               (i + 0.5) * brickWidth + (i + 1) * brickGutter,
@@ -57,7 +89,13 @@ class BrickBreaker extends FlameGame
             color: brickColors[i],
           ),
     ]);
-    debugMode = true;
+    //debugMode = true;
+  }
+
+  @override
+  void onTap() {
+    super.onTap();
+    startGame();
   }
 
   @override
@@ -71,7 +109,13 @@ class BrickBreaker extends FlameGame
         world.children.query<Bat>().first.moveBy(-batStep);
       case LogicalKeyboardKey.arrowRight:
         world.children.query<Bat>().first.moveBy(batStep);
+      case LogicalKeyboardKey.space:
+      case LogicalKeyboardKey.enter:
+        startGame();
     }
     return KeyEventResult.handled;
   }
+
+  @override
+  Color backgroundColor() => const Color(0xfff2e8cf);
 }
